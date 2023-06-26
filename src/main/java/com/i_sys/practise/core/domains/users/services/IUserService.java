@@ -14,7 +14,7 @@ public interface IUserService {
 
     User getUserByLogin(String login) throws UsernameNotFoundException;
 
-    void createUser(User user) throws Exception;
+    User createUser(User user) throws Exception;
 
     void deleteUser(UUID id) throws Exception;
 }

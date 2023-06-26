@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ public class PersonService implements IPersonService {
     public List<Person> getAllPersons() throws Exception {
         log.info("Call Method of PersonService: getAllPersons()");
 
-        var result = new ArrayList<Person>();
+        List<Person> result = personRepository.findAll();
 
         log.info("Method of PersonService: getAllPersons() successfully completed");
 
@@ -36,7 +35,7 @@ public class PersonService implements IPersonService {
     public Person getPersonById(UUID id) throws Exception {
         log.info("Call Method of PersonService: getPersonById(" + id + ")");
 
-        var person = personRepository.findById(id).orElse(null);
+        Person person = personRepository.findById(id).orElse(null);
 
         if (person == null) {
             throw new NotFoundException("The person with the specified id was not found in the system!");
@@ -47,27 +46,29 @@ public class PersonService implements IPersonService {
         return person;
     }
 
-    public void createPerson(PersonDtoPostOrPut person) throws Exception {
+    public Person createPerson(PersonDtoPostOrPut person) throws Exception {
         log.info("Call Method of PersonService: createPerson(" + person + ")");
 
-        if (person == null || person.firstName == null || person.lastName == null || person.patronymic == null) {
-            throw new ValidationException("Person or person's data are null!");
+        if (person.firstName == null || person.lastName == null || person.patronymic == null) {
+            throw new ValidationException("Person's data are null!");
         }
 
-        personRepository.save(new Person(person.firstName, person.lastName, person.patronymic));
+        Person entity = personRepository.save(new Person(person.firstName, person.lastName, person.patronymic));
 
         log.info("Call Method of PersonService: createPerson(" + person + ") successfully completed");
+
+        return entity;
     }
 
 
-    public void updatePerson(UUID id, PersonDtoPostOrPut person) throws Exception {
+    public Person updatePerson(UUID id, PersonDtoPostOrPut person) throws Exception {
         log.info("Call Method of PersonService: updatePerson(" + id + "," + person + ")");
 
-        if (person == null || person.firstName == null || person.lastName == null || person.patronymic == null) {
-            throw new ValidationException("Person or person's data are null!");
+        if (person.firstName == null || person.lastName == null || person.patronymic == null) {
+            throw new ValidationException("Person's data are null!");
         }
 
-        var entity = personRepository.findById(id).orElse(null);
+        Person entity = personRepository.findById(id).orElse(null);
 
         if (entity == null) {
             throw new NotFoundException("The person with the specified id was not found in the system!");
@@ -77,15 +78,17 @@ public class PersonService implements IPersonService {
         entity.setLastName(person.lastName);
         entity.setPatronymic(person.patronymic);
 
-        personRepository.save(entity);
+        Person result = personRepository.save(entity);
 
         log.info("Call Method of PersonService: updatePerson(" + id + "," + person + ") successfully completed");
+
+        return result;
     }
 
 
     public void deletePerson(UUID id) throws Exception {
         log.info("Call Method of PersonService: deletePerson(" + id + ")");
-        var result = personRepository.findById(id).orElse(null);
+        Person result = personRepository.findById(id).orElse(null);
 
         if (result == null) {
             throw new NotFoundException("The person with the specified id was not found in the system!");

@@ -1,8 +1,10 @@
 package com.i_sys.practise.web.controllers.autos;
 
 import com.i_sys.practise.core.domains.autos.services.IAutoService;
+import com.i_sys.practise.data.autos.Auto;
 import com.i_sys.practise.web.controllers.autos.dto.AutoDtoGet;
 import com.i_sys.practise.web.controllers.autos.dto.AutoDtoPostOrPut;
+import com.i_sys.practise.web.exceptions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,9 @@ public class AutoController {
     @GetMapping
     public List<AutoDtoGet> getAllAutos() throws Exception {
         log.info("Call Method of AutoController: getAllAutos()");
-        var result = new ArrayList<AutoDtoGet>();
+        List<AutoDtoGet> result = new ArrayList<>();
 
-        for (var auto : autoService.getAllAutos()) {
+        for (Auto auto : autoService.getAllAutos()) {
             result.add(new AutoDtoGet(auto));
         }
 
@@ -36,28 +38,56 @@ public class AutoController {
     @GetMapping({"id"})
     public AutoDtoGet getAutoById(@RequestParam UUID id) throws Exception {
         log.info("Call Method of AutoController: getAutoById(" + id + ")");
-        var result = new AutoDtoGet(autoService.getAutoById(id));
+
+        if (id == null) {
+            throw new ValidationException("Id is null!");
+        }
+
+        AutoDtoGet result = new AutoDtoGet(autoService.getAutoById(id));
         log.info("Method of AutoController: getAutoById(" + id + ") HttpStatus 200");
         return result;
     }
 
     @PostMapping
-    public void createAuto(@RequestBody AutoDtoPostOrPut auto) throws Exception {
+    public Auto createAuto(@RequestBody AutoDtoPostOrPut auto) throws Exception {
         log.info("Call Method of AutoController: createAuto(" + auto + ")");
-        autoService.createAuto(auto);
+
+        if (auto == null) {
+            throw new ValidationException("Auto is null!");
+        }
+
+        Auto result = autoService.createAuto(auto);
         log.info("Call Method of AutoController: createAuto(" + auto + ") HttpStatus 200");
+
+        return result;
     }
 
     @PutMapping({"id"})
-    public void updateAuto(@RequestParam UUID id, @RequestBody AutoDtoPostOrPut auto) throws Exception {
+    public Auto updateAuto(@RequestParam UUID id, @RequestBody AutoDtoPostOrPut auto) throws Exception {
         log.info("Call Method of AutoController: updateAuto(" + id + "," + auto + ")");
-        autoService.updateAuto(id, auto);
+
+        if (id == null) {
+            throw new ValidationException("Id is null!");
+        }
+
+        if (auto == null) {
+            throw new ValidationException("Auto is null!");
+        }
+
+        Auto result = autoService.updateAuto(id, auto);
         log.info("Call Method of AutoController: updateAuto(" + auto + ") HttpStatus 200");
+
+        return result;
     }
 
     @DeleteMapping({"id"})
     public void deleteAuto(@RequestParam UUID id) throws Exception {
         log.info("Call Method of AutoController: deleteAuto(" + id + ")");
+
+        if (id == null) {
+            throw new ValidationException("Id is null!");
+        }
+
         autoService.deleteAuto(id);
         log.info("Method of AutoController: deleteAuto(" + id + ") HttpStatus 200");
     }

@@ -12,9 +12,9 @@ public interface IAutoService {
 
     Auto getAutoById(UUID id) throws Exception;
 
-    void createAuto(AutoDtoPostOrPut auto) throws Exception;
+    Auto createAuto(AutoDtoPostOrPut auto) throws Exception;
 
-    void updateAuto(UUID id, AutoDtoPostOrPut auto) throws Exception;
+    Auto updateAuto(UUID id, AutoDtoPostOrPut auto) throws Exception;
 
     void deleteAuto(UUID id) throws Exception;
 }

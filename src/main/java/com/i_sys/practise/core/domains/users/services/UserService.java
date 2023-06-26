@@ -33,7 +33,7 @@ public class UserService implements IUserService {
     public List<User> getAllUsers() throws Exception {
         log.info("Call Method of UserService: getAllUsers()");
 
-        var result = userRepository.findAll();
+        List<User> result = userRepository.findAll();
 
         log.info("Method of UserService: getAllUsers() successfully completed");
 
@@ -43,7 +43,7 @@ public class UserService implements IUserService {
     public User getUserById(UUID id) throws Exception {
         log.info("Call Method of UserService: getUserById(" + id + ")");
 
-        var user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElse(null);
 
         if (user == null) {
             throw new NotFoundException("The user with the specified id was not found in the system!");
@@ -57,7 +57,7 @@ public class UserService implements IUserService {
     public User getUserByLogin(String login) throws UsernameNotFoundException {
         log.info("Call Method of UserService: getUserByLogin(" + login + ")");
 
-        var user = userRepository.findByLogin(login);
+        User user = userRepository.findByLogin(login);
 
         if (user == null) {
             throw new UsernameNotFoundException("The user with the specified login was not found in the system!");
@@ -68,9 +68,9 @@ public class UserService implements IUserService {
         return user;
     }
 
-    public void createUser(User user) throws Exception {
+    public User createUser(User user) throws Exception {
         log.info("Call Method of UserService: createUser(" + user + ")");
-        var role = roleRepository.findByName("user");
+        Role role = roleRepository.findByName("user");
 
         if (user == null || user.getLogin() == null || user.getPassword() == null) {
             throw new ValidationException("User or user's data are null!");
@@ -84,16 +84,18 @@ public class UserService implements IUserService {
             throw new Exception("role user is not found in system!");
         }
 
-        userRepository.save(new User(user.getLogin(), passwordEncoder.encode(user.getPassword()),
+        User entity = userRepository.save(new User(user.getLogin(), passwordEncoder.encode(user.getPassword()),
                 new ArrayList<>(Arrays.asList(role))));
 
         log.info("Call Method of UserService: createUser(" + user + ") successfully completed");
+
+        return entity;
     }
 
     public void deleteUser(UUID id) throws Exception {
         log.info("Call Method of UserService: deleteUser(" + id + ")");
 
-        var result = userRepository.findById(id).orElse(null);
+        User result = userRepository.findById(id).orElse(null);
 
         if (result == null) {
             throw new NotFoundException("The user with the specified id was not found in the system!");

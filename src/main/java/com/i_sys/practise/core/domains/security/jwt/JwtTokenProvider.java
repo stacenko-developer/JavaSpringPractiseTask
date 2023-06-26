@@ -46,11 +46,11 @@ public class JwtTokenProvider {
 
     public String createToken(String username, List<Role> roles) {
 
-        var claims = Jwts.claims().setSubject(username);
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("roles", getRoleNames(roles));
 
-        var now = new Date();
-        var validity = new Date(now.getTime() + validityInMilliseconds);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()//
                 .setClaims(claims)//
@@ -61,7 +61,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        var userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
@@ -70,7 +70,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest req) {
-        var bearerToken = req.getHeader("Authorization");
+        String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(7, bearerToken.length());
         }
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            var claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
 
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
@@ -92,7 +92,7 @@ public class JwtTokenProvider {
     }
 
     private List<String> getRoleNames(List<Role> userRoles) {
-        var result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         userRoles.forEach(role -> {
             result.add(role.getName());

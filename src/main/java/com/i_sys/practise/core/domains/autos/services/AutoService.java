@@ -3,6 +3,7 @@ package com.i_sys.practise.core.domains.autos.services;
 import com.i_sys.practise.core.domains.autos.repositories.IAutoRepository;
 import com.i_sys.practise.core.domains.persons.repositories.IPersonRepository;
 import com.i_sys.practise.data.autos.Auto;
+import com.i_sys.practise.data.persons.Person;
 import com.i_sys.practise.web.controllers.autos.dto.AutoDtoPostOrPut;
 import com.i_sys.practise.web.exceptions.NotFoundException;
 import com.i_sys.practise.web.exceptions.ValidationException;
@@ -28,7 +29,7 @@ public class AutoService implements IAutoService {
     public List<Auto> getAllAutos() throws Exception {
         log.info("Call Method of AutoService: getAllAutos()");
 
-        var result = autoRepository.findAll();
+        List<Auto> result = autoRepository.findAll();
 
         log.info("Method of AutoService: getAllAutos() successfully completed");
 
@@ -37,7 +38,7 @@ public class AutoService implements IAutoService {
 
     public Auto getAutoById(UUID id) throws Exception {
         log.info("Call Method of AutoService: getAutoById(" + id + ")");
-        var auto = autoRepository.findById(id).orElse(null);
+        Auto auto = autoRepository.findById(id).orElse(null);
 
         if (auto == null) {
             throw new NotFoundException("The auto with the specified id was not found in the system!");
@@ -48,41 +49,35 @@ public class AutoService implements IAutoService {
         return auto;
     }
 
-    public void createAuto(AutoDtoPostOrPut auto) throws Exception {
+    public Auto createAuto(AutoDtoPostOrPut auto) throws Exception {
         log.info("Call Method of AutoService: createAuto(" + auto + ")");
 
-        if (auto == null) {
-            throw new ValidationException("Auto is null!");
-        }
-
-        var person = personRepository.findById(auto.personId).orElse(null);
+        Person person = personRepository.findById(auto.personId).orElse(null);
 
         if (person == null) {
-            throw new ValidationException("The person with the specified id was not found in the system!");
+            throw new NotFoundException("The person with the specified id was not found in the system!");
         }
 
-        autoRepository.save(new Auto(auto.productionYear, auto.enginePower, auto.engineCapacity, person));
+        Auto entity = autoRepository.save(new Auto(auto.productionYear, auto.enginePower, auto.engineCapacity, person));
 
         log.info("Call Method of AutoService: createAuto(" + auto + ") successfully completed");
+
+        return entity;
     }
 
-    public void updateAuto(UUID id, AutoDtoPostOrPut auto) throws Exception {
+    public Auto updateAuto(UUID id, AutoDtoPostOrPut auto) throws Exception {
         log.info("Call Method of AutoService: updateAuto(" + id + "," + auto + ")");
 
-        if (auto == null) {
-            throw new ValidationException("Auto is null!");
-        }
-
-        var entity = autoRepository.findById(id).orElse(null);
+        Auto entity = autoRepository.findById(id).orElse(null);
 
         if (entity == null) {
             throw new NotFoundException("The auto with the specified id was not found in the system!");
         }
 
-        var person = personRepository.findById(auto.personId).orElse(null);
+        Person person = personRepository.findById(auto.personId).orElse(null);
 
         if (person == null) {
-            throw new ValidationException("The person with the specified id was not found in the system!");
+            throw new NotFoundException("The person with the specified id was not found in the system!");
         }
 
         entity.setProductionYear(auto.productionYear);
@@ -90,14 +85,16 @@ public class AutoService implements IAutoService {
         entity.setEngineCapacity(auto.engineCapacity);
         entity.setPerson(person);
 
-        autoRepository.save(entity);
+        Auto result = autoRepository.save(entity);
 
         log.info("Call Method of AutoService: updateAuto(" + id + "," + auto + ") successfully completed");
+
+        return result;
     }
 
     public void deleteAuto(UUID id) throws Exception {
         log.info("Call Method of AutoService: deleteAuto(" + id + ")");
-        var result = autoRepository.findById(id).orElse(null);
+        Auto result = autoRepository.findById(id).orElse(null);
 
         if (result == null) {
             throw new NotFoundException("The auto with the specified id was not found in the system!");

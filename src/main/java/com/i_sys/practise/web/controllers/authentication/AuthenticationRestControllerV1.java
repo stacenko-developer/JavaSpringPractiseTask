@@ -39,7 +39,7 @@ import java.util.HashMap;
 //        try {
 //            String username = requestDto.login;
 //            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.password));
-//            var user = userRepository.findByLogin(username);
+//            User user = userRepository.findByLogin(username);
 //
 //            if (user == null) {
 //                throw new UsernameNotFoundException("User with username: " + username + " not found");

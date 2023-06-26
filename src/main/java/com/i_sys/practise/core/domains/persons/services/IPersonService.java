@@ -12,9 +12,9 @@ public interface IPersonService {
 
     Person getPersonById(UUID id) throws Exception;
 
-    void createPerson(PersonDtoPostOrPut person) throws Exception;
+    Person createPerson(PersonDtoPostOrPut person) throws Exception;
 
-    void updatePerson(UUID id, PersonDtoPostOrPut person) throws Exception;
+    Person updatePerson(UUID id, PersonDtoPostOrPut person) throws Exception;
 
     void deletePerson(UUID id) throws Exception;
 }

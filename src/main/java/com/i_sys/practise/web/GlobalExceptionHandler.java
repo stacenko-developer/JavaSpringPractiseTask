@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class GlobalExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class.getName());
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    @ResponseStatus(value = HttpStatus.OK)
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity handleException(NotFoundException ex) {
         log.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.OK).body(ex.getMessage());
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
